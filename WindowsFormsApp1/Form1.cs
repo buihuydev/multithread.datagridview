@@ -17,7 +17,10 @@ namespace WindowsFormsApp1
         public Form1()
         {
             InitializeComponent();
-            dataGridView1.Rows.Add(5);
+            for(int i = 0; i < 10; i++)
+            {
+                dataGridView1.Rows.Add($"thread {i}");
+            }
         }
         public class ThreadInfo
         {
