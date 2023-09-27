@@ -31,6 +31,11 @@ namespace WindowsFormsApp1
         List<ThreadInfo> runningThreads = new List<ThreadInfo>();
         private void button1_Click(object sender, EventArgs e)
         {
+            if(dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Không có luồng nào được chọn!");
+                return;
+            }
             foreach (DataGridViewRow row in dataGridView1.SelectedRows)
             {
                 Thread thread = new Thread(() =>
@@ -55,25 +60,21 @@ namespace WindowsFormsApp1
                     {
                         runningThreads.Add(threadInfo);
                     }
-                    while (!threadInfo.IsStopped)
-                    {
-                        dataGridView1.Invoke((MethodInvoker)delegate
-                        {
-                            row.Cells[1].Value = DateTime.Now;
-                        });
-                        Thread.Sleep(1000);
-                    }
-                    lock (runningThreads)
-                    {
-                        runningThreads.Remove(threadInfo);
-                    }
+                    Class1.upload(row,threadInfo);
                 });
                 thread.Start();
             }
+            MessageBox.Show(runningThreads.Count.ToString());
+
         }
+
         private void button2_Click(object sender, EventArgs e)
         {
-            // Dừng luồng chỉ định
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Không có luồng nào được chọn!");
+                return;
+            }
             foreach (DataGridViewRow row in dataGridView1.SelectedRows)
             {
                 int threadCount = row.Index;
@@ -81,9 +82,10 @@ namespace WindowsFormsApp1
                 if (threadInfo != null)
                 {
                     threadInfo.IsStopped = true;
-                    row.Cells[1].Value = "đã dừng";
+                    runningThreads.Remove(threadInfo);
                 }
             }
+            MessageBox.Show(runningThreads.Count.ToString());
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
